@@ -1,0 +1,13 @@
+system:
+
+  build:
+    version: ${version}
+    timestamp: ${timestamp}
+
+spring:
+  profiles:
+    active: dev
+
+mongoDB:
+  testkey: testvalue
+

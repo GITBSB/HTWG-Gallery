@@ -1,0 +1,49 @@
+/*
+ * Root gradle project 
+ */
+
+subprojects {
+    version = '0.0.1'
+}
+
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "gradle.plugin.org.gradle.plugins:gradle-site-plugin:0.6"
+    }
+}
+
+apply plugin: "gradle.site"
+
+task copyFrontend(type: Copy) {
+    description 'Copy frontend production build into backend resources'
+    from project(':frontend').buildDir
+    into "${project(':backend').buildDir}/resources/main/webapp"
+}
+
+task buildFrontend {
+    description 'Build web frontend'
+    dependsOn ':frontend:build'
+}
+
+task buildBackend {
+    description 'Build web backend'
+    dependsOn ':backend:bootJar'
+}
+
+buildBackend.mustRunAfter copyFrontend
+copyFrontend.mustRunAfter buildFrontend
+
+task bootRun {
+    dependsOn ':backend:bootRun'
+}
+
+task jar {
+    dependsOn 'copyFrontend'
+    dependsOn 'buildFrontend'
+    dependsOn 'buildBackend'
+}
